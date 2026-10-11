@@ -24,15 +24,15 @@ bearing=uidropdown(g,'Items',{'Radial ball (D9)','Radial roller (D10)','Thrust b
 label('Bearing design',3,1,12,false);
 design=uidropdown(g,'Items',{'Basic / SKF standard','SKF Explorer'}, ...
     'ItemsData',{'Basic','Explorer'},'Value','Basic');place(design,3,2);
-speed=input('Speed n (rpm)',4,750,[2 100000]);
+speed=input('Speed $n$ (rpm)',4,750,[2 100000]);
 label('Oil',5,1,12,false);
 oil=uidropdown(g,'Items',{O.name},'ItemsData',[O.grade],'Value',46);place(oil,5,2);
-temperature=input('Oil temperature (C)',6,60,[-273.14 Inf]);
-outer=input('Outer diameter D (mm)',7,120,[eps Inf]);
-inner=input('Inner diameter d (mm)',8,80,[eps Inf]);
-eta=input('Cleanliness eta_c',9,.5,[eps 1]);
-Pu=input('Fatigue limit Pu (kN)',10,1,[eps Inf]);
-P=input('Equivalent load P (kN)',11,5,[eps Inf]);
+temperature=input('Oil temperature (°C)',6,60,[-273.14 Inf]);
+outer=input('Outer diameter $D$ (mm)',7,120,[eps Inf]);
+inner=input('Inner diameter $d$ (mm)',8,80,[eps Inf]);
+eta=input('Cleanliness $\eta_c$',9,.5,[eps 1]);
+Pu=input('Fatigue limit $P_u$ (kN)',10,1,[eps Inf]);
+P=input('Equivalent load $P$ (kN)',11,5,[eps Inf]);
 label('Chart model',12,1,12,false);
 model=uidropdown(g,'Items',{'PCHIP in log space','Original PDF vector','Linear in log space','MAKIMA in log space'}, ...
     'ItemsData',{'pchip','vector','linear','makima'},'Value','pchip');place(model,12,2);
@@ -41,12 +41,15 @@ bg=uigridlayout(g,[1 2]);place(bg,14,[1 2]);bg.Padding=[0 0 0 0];bg.ColumnWidth=
 calc=uibutton(bg,'Text','Calculate','BackgroundColor',[.1 .36 .64],'FontColor','white');
 saveLog=uibutton(bg,'Text','Save log');
 label('Calculated automatically',15,[1 2],12,true);
-dmField=output('Mean diameter dm (mm)',16);
-nu1Field=output('Rated nu_1 (mm^2/s)',17);
-nuField=output('Oil nu (mm^2/s)',18);
-kField=output('Kappa = nu / nu_1',19);
-qField=output('q = eta_c Pu / P',20);
-answer=uilabel(g,'Text','aSKF = --','FontSize',27,'FontWeight','bold','FontColor',[.08 .28 .5]);place(answer,21,[1 2]);
+dmField=output('Mean diameter $d_m$ (mm)',16);
+nu1Field=output('Rated $\nu_1$ (mm²/s)',17);
+nuField=output('Oil $\nu$ (mm²/s)',18);
+kField=output('$\kappa$ = $\nu$ / $\nu_1$',19);
+qField=output('$q$ = $\eta_c$ $P_u$ / $P$',20);
+answerGrid=uigridlayout(g,[1 2]);place(answerGrid,21,[1 2]);
+answerGrid.Padding=[0 0 0 0];answerGrid.ColumnSpacing=5;answerGrid.ColumnWidth={'fit','1x'};
+uilabel(answerGrid,'Text','$a_{\mathrm{SKF}}$','Interpreter','latex','FontSize',27,'FontColor',[.08 .28 .5]);
+answer=uilabel(answerGrid,'Text','= --','FontSize',27,'FontWeight','bold','FontColor',[.08 .28 .5]);
 notes=uitextarea(g,'Editable','off','FontSize',11,'Value',{'Loading...'});place(notes,22,[1 2]);
 label('SKF charts and supplied Amokon oil data',23,[1 2],10,false);
 speed.Tooltip='Diagram 14: rpm. Intermediate speeds are interpolated in log space.';
@@ -90,7 +93,20 @@ fig.SizeChangedFcn=@(~,~)layoutLegends();
     function result=getResult(),result=R;end
     function lines=getHistory(),lines=history;end
     function h=label(text,row,col,size,bold)
-        h=uilabel(g,'Text',text,'FontSize',size);if bold,h.FontWeight='bold';end
+        % Separate controls keep the UI font for prose and LaTeX only for symbols.
+        if contains(text,'$')
+            parts=regexp(text,'\$[^$]+\$|[^$]+','match');
+            h=uigridlayout(g,[1 numel(parts)]);
+            h.Padding=[0 0 0 0];h.ColumnSpacing=3;
+            h.ColumnWidth=repmat({'fit'},1,numel(parts));
+            for k=1:numel(parts)
+                part=uilabel(h,'Text',strtrim(parts{k}),'FontSize',size);
+                if contains(parts{k},'$'),part.Interpreter='latex';end
+                if bold,part.FontWeight='bold';end
+            end
+        else
+            h=uilabel(g,'Text',text,'FontSize',size);if bold,h.FontWeight='bold';end
+        end
         place(h,row,col);
     end
     function place(h,row,col),h.Layout.Row=row;h.Layout.Column=col;end
@@ -196,7 +212,11 @@ fig.SizeChangedFcn=@(~,~)layoutLegends();
         logArea.Value=cellstr(R.log);
         dmField.Value=number(R.dm);nu1Field.Value=number(R.nu1);nuField.Value=number(R.nu_oil);
         kField.Value=number(R.kappa);qField.Value=number(R.q);
-        if isfinite(R.aSKF),answer.Text=sprintf('aSKF = %.6g',R.aSKF);else,answer.Text='aSKF = unavailable';end
+        if isfinite(R.aSKF)
+            answer.Text=sprintf('= %.6g',R.aSKF);
+        else
+            answer.Text='= unavailable';
+        end
         names={'Radial ball','Radial roller','Thrust ball','Thrust roller'};
         heading.Text=sprintf('%s - %s - VG %d',names{bearing.Value-8},design.Value,oil.Value);
         notes.Value=cellstr([R.status;"Open Calculation log for all intermediate values."]);
