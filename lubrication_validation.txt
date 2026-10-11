@@ -1,0 +1,6 @@
+VG32: 141 rows; exact 40/100 C anchors; max interior leave-one-out error 0.014925499%.
+VG46: 141 rows; exact 40/100 C anchors; max interior leave-one-out error 0.015965636%.
+VG68: 141 rows; exact 40/100 C anchors; max interior leave-one-out error 0.016962324%.
+VG100: 141 rows; exact 40/100 C anchors; max interior leave-one-out error 0.016867078%.
+Diagram 14: 17 speeds, 510 samples; max PCHIP/vector error 0.02075405%.
+PASS: calculation chain, all 8 life selections, all four oil files, speed interpolation, domain rejection, log and GUI updates.

@@ -1,0 +1,43 @@
+SKF bearing lubrication and life calculation
+Time: 2026-10-11 16:16:06
+Bearing diagram: 9; design: Basic; chart model: pchip
+n = 750 rpm; oil = Amokon ISO VG 46; T = 60 C
+D = 120 mm; d = 80 mm; eta_c = 0.5; Pu = 1 kN; P = 5 kN
+
+d_m = (D + d)/2 = (120 + 80)/2 = 100 mm
+n*d_m = 750 * 100 = 75000 mm/min
+q = eta_c*Pu/P = 0.5 * 1 / 5 = 0.1
+
+OIL VISCOSITY
+Source: F:\LinkedIn\1st Week\1st; About L10 of Anti-friction\Codes\SKF_2025b\Lubs\Lubs\VG46.txt
+Read numeric column 4: kinematic viscosity, cSt = mm^2/s. 141 source rows.
+Temperature grid: T_C = (T_F - 32)*5/9; rounded source Celsius is not used.
+Temperature bracket: [60, 60] C; source viscosities: [21.6181, 21.6181] mm^2/s
+Method: PCHIP(T_C, log10(nu_oil)), then 10^interpolated_value.
+nu_oil = 21.6181 mm^2/s
+Kinematic oil viscosity from the supplied TXT database.
+
+RATED VISCOSITY - DIAGRAM 14
+Source: Life Modification.pdf, PDF page 8, catalogue page 101.
+Horizontal: d_m [mm]. Vertical: nu_1 [mm^2/s]. Lines: speed n [rpm].
+Speed bracket: [500, 1000] rpm; log-speed weight = 0.584962500721
+Visible diameter overlap: [10, 809.80820965] mm
+Within each speed curve: pchip in log(d_m), log(nu_1).
+nu_1 on bracketing curves: [20.9582626994, 11.5656529472] mm^2/s
+log10(nu_1) = (1-w)*log10(nu_low) + w*log10(nu_high).
+nu_1 = 14.8022135078 mm^2/s
+Diagram 14: interpolation between 500 and 1000 rpm; log-speed weight = 0.5849625.
+
+kappa = nu_oil / nu_1 = 21.6181 / 14.8022135078 = 1.46046400348
+kappa used for aSKF = 1.46046400348 (source cap at 4; actual kappa remains displayed)
+
+LIFE DIAGRAM 9 - Basic
+q domain = [0.005, 5]; requested q = 0.1
+kappa bracket = [1, 1.5]; log-kappa weight = 0.93412278457
+aSKF on bracketing curves = [1.85928350702, 3.15896822342]
+log10(aSKF) = (1-w)*log10(a_low) + w*log10(a_high).
+
+FINAL aSKF = 3.05056544122
+Interpolated chart estimate. Linear interpolation in log(kappa). Uses an assumed label (kappa = 1.5 or 3).
+Unlabelled life curves k=1.5 and k=3 retain their assumed labels.
+No temperature, speed, diameter, or q extrapolation. Digitized charts are approximate.

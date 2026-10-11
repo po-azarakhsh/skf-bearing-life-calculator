@@ -1,0 +1,22 @@
+# MATLAB editor and generated files
+*.asv
+*.m~
+*.mex*
+slprj/
+codegen/
+.SimulinkProject/
+# Compiled products are distributed using GitHub Releases
+dist/
+build/
+*.ctf
+*.exe
+*.zip
+*_mcr/
+# Local logs and system files
+*.log
+matlab_crash_dump*
+java.log*
+.DS_Store
+Thumbs.db
+Desktop.ini
+# Keep source data (.json, .csv, .txt, .xlsx) and evidence images tracked.

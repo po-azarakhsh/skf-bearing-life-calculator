@@ -1,0 +1,17 @@
+Standalone build validation (MATLAB R2025b / Windows 64-bit)
+MATLAB Compiler installed and licensed: yes
+Build: compiler.build.standaloneWindowsApplication
+Embedded data: skf_data.json, diagram14_data.json, Lubs folder
+Unresolved symbols: none
+Compiled executable exit code in smoke test: 0
+GUI created and default calculation completed using embedded data.
+dm = 100 mm
+nu1 = 14.80221350782295 cSt
+nu_oil = 21.6181 cSt
+kappa = 1.4604640034799432
+aSKF = 3.0505654412159919
+Validated against existing MATLAB calculation.
+Test environment: installed R2025b runtime libraries on the build computer.
+A separate clean-machine Runtime installation has not been tested.
+Executable SHA256: F437A373C6336392D362A055125C32ADCA7EB75781F2D6FC2D363905538480A8
+Release ZIP SHA256: 5EF0D504F9BE00193E9EFCEF8C1FF9E2176207A39C0B0F32A8CE14DACA0DDC3D
